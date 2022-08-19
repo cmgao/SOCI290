@@ -1,0 +1,91 @@
+---
+title: "project"
+author: "soci290"
+date: "9/6/2021"
+output: html_document
+---
+
+```{r, include=FALSE}
+library(dplyr)
+library(urbnmapr)
+library(dplyr)
+library(ggplot2)
+library(viridis)
+library(totalcensus)
+library(stringr)
+
+```
+
+
+```{r}
+
+install.packages("factoextra")
+
+##install devtools so that you can install urbanmapr from github
+# install.packages("devtools")
+# devtools::install_github("UrbanInstitute/urbnmapr", force=TRUE)
+```
+
+```{r}
+load("2018 HIV infection rates.RData") ###load your data here.
+
+###make sure each of these packages are installed
+
+# map.values<-HIVdata
+# ### map.values should be your data with geocodes
+# library(stringr)
+# map.values$county_fips<-str_pad(map.values$ï..GEO.ID,5,"left","0") ###the "fipscountycode" variable here should be replaced by your Geo_ID variable
+# 
+# county.dat<-map.values 
+# 
+# ##the "counties" data set is available from the totalcensus package. If you have trouble loading it, make sure that totalcensus is loaded
+# test<- full_join(county.dat, counties,all.x=T)  ##merge the two datasets
+# 
+# usa<-map_data("usa") ###this code pulls out latitude/longitude for all US regions
+
+```
+
+```{r} 
+HIVdata.groups <- HIVdata[,c("ï..GEO.ID","MSM.Cases", "IDU.Cases", "Black.Cases", "Age.25.34.Cases")]
+
+
+set.seed(21093)
+
+unsup <- kmeans(c(HIVdata$MSM.Cases, HIVdata$IDU.Cases, HIVdata$Black.Cases, HIVdata$Age.25.34.Cases), centers=3, nstart=50)
+table(unsup)
+
+```
+
+
+## optimal number of clusters
+
+```{r}
+library(factoextra)
+fviz_nbclust(x = HIVdata.groups, FUNcluster = kmeans, method = 'silhouette' )
+
+## optimal number of clusters = 2 LOL
+
+
+
+```
+
+
+
+## actual k means analysis
+```{r}
+unsup <- kmeans(HIVdata.groups, centers=2, nstart=25)
+
+print(unsup)
+unsup1 <- kmeans(HIVdata.groups, centers=10, nstart=25)
+
+
+
+
+fviz_cluster(unsup, data=HIVdata.groups)
+fviz_cluster(unsup1, data=HIVdata.groups)
+unsup$centers
+unsup$size
+
+
+
+```
