@@ -63,7 +63,7 @@ table(unsup)
 library(factoextra)
 fviz_nbclust(x = HIVdata.groups, FUNcluster = kmeans, method = 'silhouette' )
 
-## optimal number of clusters = 2 LOL
+## optimal number of clusters = 2
 
 
 
